@@ -1,0 +1,8 @@
+node_modules/
+.env
+.DS_Store
+build/
+.cache/
+prisma/migrations/dev.db
+*.local
+.shopify/

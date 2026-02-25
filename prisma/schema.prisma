@@ -1,0 +1,95 @@
+// TrackFlow — Bulk CSV Tracking Import for Shopify
+// Prisma Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Shopify App session storage (required by @shopify/shopify-app-session-storage-prisma)
+model Session {
+  id            String    @id
+  shop          String
+  state         String
+  isOnline      Boolean   @default(false)
+  scope         String?
+  expires       DateTime?
+  accessToken   String
+  userId        BigInt?
+  firstName     String?
+  lastName      String?
+  email         String?
+  accountOwner  Boolean   @default(false)
+  locale        String?
+  collaborator  Boolean?  @default(false)
+  emailVerified Boolean?  @default(false)
+}
+
+// One import job = one CSV upload
+model ImportJob {
+  id              String      @id @default(cuid())
+  shop            String
+  filename        String
+  status          ImportStatus @default(PENDING)
+  totalRows       Int         @default(0)
+  successCount    Int         @default(0)
+  failedCount     Int         @default(0)
+  skippedCount    Int         @default(0)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  rows            ImportRow[]
+}
+
+// One row = one order fulfillment attempt
+model ImportRow {
+  id              String      @id @default(cuid())
+  jobId           String
+  job             ImportJob   @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  rowIndex        Int
+  orderName       String      // e.g. "#1001"
+  orderId         String?     // Shopify order GID (resolved during import)
+  trackingNumber  String
+  carrier         String
+  carrierUrl      String?
+  status          RowStatus   @default(PENDING)
+  errorMessage    String?
+  processedAt     DateTime?
+  createdAt       DateTime    @default(now())
+}
+
+// Merchant billing/usage tracking
+model MerchantUsage {
+  id                    String    @id @default(cuid())
+  shop                  String    @unique
+  plan                  PlanTier  @default(FREE)
+  ordersImportedThisCycle Int     @default(0)
+  cycleStartDate        DateTime  @default(now())
+  totalOrdersImported   Int       @default(0)
+  shopifySubscriptionId String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+enum ImportStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  COMPLETED_WITH_ERRORS
+  FAILED
+}
+
+enum RowStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  SKIPPED
+}
+
+enum PlanTier {
+  FREE
+  PRO
+}
