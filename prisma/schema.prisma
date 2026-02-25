@@ -34,7 +34,7 @@ model ImportJob {
   id              String      @id @default(cuid())
   shop            String
   filename        String
-  status          ImportStatus @default(PENDING)
+  status          String       @default("PENDING")
   totalRows       Int         @default(0)
   successCount    Int         @default(0)
   failedCount     Int         @default(0)
@@ -55,7 +55,7 @@ model ImportRow {
   trackingNumber  String
   carrier         String
   carrierUrl      String?
-  status          RowStatus   @default(PENDING)
+  status          String      @default("PENDING")
   errorMessage    String?
   processedAt     DateTime?
   createdAt       DateTime    @default(now())
@@ -65,7 +65,7 @@ model ImportRow {
 model MerchantUsage {
   id                    String    @id @default(cuid())
   shop                  String    @unique
-  plan                  PlanTier  @default(FREE)
+  plan                  String    @default("FREE")
   ordersImportedThisCycle Int     @default(0)
   cycleStartDate        DateTime  @default(now())
   totalOrdersImported   Int       @default(0)
@@ -74,22 +74,7 @@ model MerchantUsage {
   updatedAt             DateTime  @updatedAt
 }
 
-enum ImportStatus {
-  PENDING
-  RUNNING
-  COMPLETED
-  COMPLETED_WITH_ERRORS
-  FAILED
-}
-
-enum RowStatus {
-  PENDING
-  SUCCESS
-  FAILED
-  SKIPPED
-}
-
-enum PlanTier {
-  FREE
-  PRO
-}
+// Status values stored as strings:
+// ImportStatus: PENDING, RUNNING, COMPLETED, COMPLETED_WITH_ERRORS, FAILED
+// RowStatus: PENDING, SUCCESS, FAILED, SKIPPED
+// PlanTier: FREE, PRO

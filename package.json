@@ -1,6 +1,7 @@
 {
   "name": "@trackflow/shopify-app",
   "private": true,
+  "type": "module",
   "version": "0.1.0",
   "scripts": {
     "build": "remix vite:build",
