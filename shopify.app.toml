@@ -2,12 +2,11 @@
 
 client_id = "fb2e56b0055fc93aee7ade7973a70a52"
 name = "TrackFlow"
-application_url = "https://shopify.dev/apps/default-app-home"
+application_url = "https://trackflow-production-0d42.up.railway.app"
 embedded = true
 
 [build]
 automatically_update_urls_on_dev = true
-include_config_on_deploy = true
 
 [webhooks]
 api_version = "2025-01"
@@ -20,7 +19,7 @@ api_version = "2025-01"
 scopes = "read_orders,write_orders"
 
 [auth]
-redirect_urls = [ "https://shopify.dev/apps/default-app-home/api/auth" ]
+redirect_urls = [ "https://trackflow-production-0d42.up.railway.app/api/auth" ]
 
 [pos]
 embedded = false
