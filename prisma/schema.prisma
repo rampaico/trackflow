@@ -74,6 +74,51 @@ model MerchantUsage {
   updatedAt             DateTime  @updatedAt
 }
 
+// ── Auto-Import: Email Forwarding ─────────────────────────────────────────────
+
+// Unique email address per shop (import-{token}@mail.trackflow.app)
+// When an email arrives at that address, the attachment is auto-imported.
+model EmailImportAddress {
+  id          String    @id @default(cuid())
+  shop        String    @unique
+  token       String    @unique   // random, URL-safe (e.g. "x7k2p9")
+  email       String    @unique   // import-{token}@mail.trackflow.app
+  isActive    Boolean   @default(true)
+  lastUsedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// ── Auto-Import: Drive / Dropbox Connection ────────────────────────────────────
+
+model DriveConnection {
+  id            String    @id @default(cuid())
+  shop          String
+  provider      String    // "google_drive" | "dropbox"
+  accessToken   String    // encrypted at rest
+  refreshToken  String?   // for Google Drive PKCE refresh
+  expiresAt     DateTime?
+  folderPath    String    // Drive folder ID or Dropbox path to watch
+  folderName    String?   // human-readable label
+  lastPolledAt  DateTime?
+  lastImportAt  DateTime?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// ── Auto-Import: Job source tracking ─────────────────────────────────────────
+
+// Extend ImportJob with auto-import source
+// Added as separate model to avoid migration breaking existing jobs
+model ImportJobSource {
+  id            String    @id @default(cuid())
+  jobId         String    @unique
+  source        String    // "manual" | "email" | "google_drive" | "dropbox"
+  sourceRef     String?   // e.g. email Message-Id or Drive file ID
+  createdAt     DateTime  @default(now())
+}
+
 // Status values stored as strings:
 // ImportStatus: PENDING, RUNNING, COMPLETED, COMPLETED_WITH_ERRORS, FAILED
 // RowStatus: PENDING, SUCCESS, FAILED, SKIPPED

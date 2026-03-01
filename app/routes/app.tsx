@@ -21,6 +21,7 @@ export default function App() {
       <NavMenu>
         <Link to="/app" rel="home">Dashboard</Link>
         <Link to="/app/import">Import Tracking</Link>
+        <Link to="/app/auto-import">Auto-Import</Link>
         <Link to="/app/history">History</Link>
         <Link to="/app/billing">Billing</Link>
       </NavMenu>

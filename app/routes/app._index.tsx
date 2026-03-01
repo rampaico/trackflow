@@ -226,9 +226,14 @@ export default function Dashboard() {
                   </InlineStack>
                 ))}
               </BlockStack>
-              <Button url="/app/import" variant="primary" size="large">
-                Start Importing →
-              </Button>
+              <InlineStack gap="300" align="start">
+                <Button url="/app/import" variant="primary" size="large">
+                  Import CSV Now →
+                </Button>
+                <Button url="/app/auto-import" variant="secondary">
+                  ✉️ Set Up Auto-Import
+                </Button>
+              </InlineStack>
             </BlockStack>
           </Card>
         </Layout.Section>
