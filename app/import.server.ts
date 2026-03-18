@@ -123,7 +123,7 @@ async function lookupOrderId(
         }
       }
     }`,
-    { variables: { query: `name:${orderName}` } }
+    { variables: { query: `name:${orderName.replace(/[^a-zA-Z0-9#\-_.]/g, "")}` } }
   );
 
   const data = await response.json();

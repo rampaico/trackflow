@@ -13,6 +13,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return json({ error: "Method not allowed" }, { status: 405 });
   }
 
+  // Verify webhook authenticity via shared secret header
+  const webhookSecret = process.env.EMAIL_WEBHOOK_SECRET;
+  if (webhookSecret) {
+    const authHeader = request.headers.get("x-webhook-secret") || request.headers.get("authorization");
+    if (authHeader !== webhookSecret && authHeader !== `Bearer ${webhookSecret}`) {
+      console.warn("[Email webhook] Invalid or missing authentication");
+      return json({ error: "Unauthorized" }, { status: 401 });
+    }
+  }
+
   try {
     const formData = await request.formData();
 
